@@ -1,5 +1,3 @@
-// app/api/auth/pin/route.js
-
 import { db } from "@/lib/db.js";
 import { clinics } from "@/lib/schema.js";
 import { SignJWT } from "jose";
@@ -12,36 +10,44 @@ const ROLE_CONFIG = {
   receptionist: {
     phoneField: "phone_receptionist",
     pinField: "pin_receptionist",
+    emailField: "email_receptionist",
     cookie: "receptionist_session",
   },
   pharmacy: {
     phoneField: "phone_pharmacy",
     pinField: "pin_pharmacy",
+    emailField: "email_pharmacy",
     cookie: "pharmacy_session",
   },
   psychologist: {
     phoneField: "phone_psychologist",
     pinField: "pin_psychologist",
+    emailField: "email_psychologist",
     cookie: "psychologist_session",
   },
 };
 
 export async function POST(request) {
-  const { phone, pin, role } = await request.json();
+  const { phone, pin, email, role } = await request.json();
 
-  if (!phone || !pin || !role)
+  if (!phone || !pin || !email || !role)
     return NextResponse.json({ error: "Missing fields" }, { status: 400 });
 
   if (!ROLE_CONFIG[role])
     return NextResponse.json({ error: "Invalid role" }, { status: 400 });
 
-  const { phoneField, pinField, cookie: cookieName } = ROLE_CONFIG[role];
+  const { phoneField, pinField, emailField, cookie: cookieName } = ROLE_CONFIG[role];
 
   const [clinic] = await db.select().from(clinics);
 
-  if (!clinic || clinic[phoneField] !== phone || clinic[pinField] !== pin)
+  if (
+    !clinic ||
+    clinic[phoneField] !== phone ||
+    clinic[pinField] !== pin ||
+    clinic[emailField]?.toLowerCase() !== email.toLowerCase()
+  )
     return NextResponse.json(
-      { error: "Wrong mobile number or PIN" },
+      { error: "Wrong mobile, PIN or email" },
       { status: 401 },
     );
 

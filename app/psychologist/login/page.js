@@ -4,13 +4,14 @@ import { useState } from "react";
 export default function PsychologistLoginPage() {
   const [phone, setPhone] = useState("");
   const [pin, setPin] = useState("");
+  const [email, setEmail] = useState("");
   const [showPin, setShowPin] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   async function handleLogin() {
-    if (phone.length !== 10 || pin.length !== 6) {
-      setError("Enter 10-digit mobile and 6-digit PIN");
+    if (phone.length !== 10 || pin.length !== 6 || !email.trim()) {
+      setError("Enter 10-digit mobile, 6-digit PIN and email");
       return;
     }
     setLoading(true);
@@ -18,7 +19,7 @@ export default function PsychologistLoginPage() {
     const res = await fetch("/api/auth/pin", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ phone, pin, role: "psychologist" }),
+      body: JSON.stringify({ phone, pin, email: email.trim(), role: "psychologist" }),
     });
     const data = await res.json();
     setLoading(false);
@@ -36,18 +37,13 @@ export default function PsychologistLoginPage() {
         onSubmit={(e) => e.preventDefault()}
         className="bg-white rounded-2xl shadow p-8 w-full max-w-sm flex flex-col gap-5"
       >
-        {/* Decoy fields to absorb Chrome autofill */}
         <input type="text" name="username" autoComplete="username" className="hidden" tabIndex={-1} />
         <input type="password" name="password" autoComplete="current-password" className="hidden" tabIndex={-1} />
 
         <div className="text-center">
           <div className="text-4xl mb-2">🧠</div>
-          <h1 className="text-xl font-bold text-purple-800">
-            Psychologist Login
-          </h1>
-          <p className="text-gray-400 text-sm mt-1">
-            Enter your mobile number and PIN
-          </p>
+          <h1 className="text-xl font-bold text-purple-800">Psychologist Login</h1>
+          <p className="text-gray-400 text-sm mt-1">Enter your mobile, PIN and email</p>
         </div>
 
         <input
@@ -57,9 +53,7 @@ export default function PsychologistLoginPage() {
           autoComplete="off"
           data-form-type="other"
           value={phone}
-          onChange={(e) =>
-            setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))
-          }
+          onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
           placeholder="10-digit mobile number"
           maxLength={10}
           className="w-full border border-gray-300 rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-purple-400"
@@ -72,9 +66,7 @@ export default function PsychologistLoginPage() {
             autoComplete="off"
             data-form-type="other"
             value={pin}
-            onChange={(e) =>
-              setPin(e.target.value.replace(/\D/g, "").slice(0, 6))
-            }
+            onChange={(e) => setPin(e.target.value.replace(/\D/g, "").slice(0, 6))}
             placeholder="6-digit PIN"
             maxLength={6}
             inputMode="numeric"
@@ -89,6 +81,17 @@ export default function PsychologistLoginPage() {
             {showPin ? "🙈" : "👁️"}
           </button>
         </div>
+
+        <input
+          type="email"
+          name="psy-email-xyz"
+          autoComplete="off"
+          data-form-type="other"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Your email address"
+          className="w-full border border-gray-300 rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-purple-400"
+        />
 
         {error && <p className="text-red-500 text-sm text-center">{error}</p>}
 

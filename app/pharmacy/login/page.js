@@ -4,13 +4,14 @@ import { useState } from 'react';
 export default function PharmacyLoginPage() {
   const [phone, setPhone] = useState('');
   const [pin, setPin] = useState('');
+  const [email, setEmail] = useState('');
   const [showPin, setShowPin] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   async function handleLogin() {
-    if (phone.length !== 10 || pin.length !== 6) {
-      setError('Enter 10-digit mobile and 6-digit PIN');
+    if (phone.length !== 10 || pin.length !== 6 || !email.trim()) {
+      setError('Enter 10-digit mobile, 6-digit PIN and email');
       return;
     }
     setLoading(true);
@@ -18,7 +19,7 @@ export default function PharmacyLoginPage() {
     const res = await fetch('/api/auth/pin', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ phone, pin, role: 'pharmacy' }),
+      body: JSON.stringify({ phone, pin, email: email.trim(), role: 'pharmacy' }),
     });
     const data = await res.json();
     setLoading(false);
@@ -35,7 +36,7 @@ export default function PharmacyLoginPage() {
         <div className="text-center">
           <div className="text-4xl mb-2">💊</div>
           <h1 className="text-xl font-bold text-orange-800">Pharmacy Login</h1>
-          <p className="text-gray-400 text-sm mt-1">Enter your mobile number and PIN</p>
+          <p className="text-gray-400 text-sm mt-1">Enter your mobile, PIN and email</p>
         </div>
         <input
           type="tel"
@@ -65,6 +66,13 @@ export default function PharmacyLoginPage() {
             {showPin ? '🙈' : '👁️'}
           </button>
         </div>
+        <input
+          type="email"
+          value={email}
+          onChange={e => setEmail(e.target.value)}
+          placeholder="Your email address"
+          className="w-full border border-gray-300 rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-orange-400"
+        />
         {error && <p className="text-red-500 text-sm text-center">{error}</p>}
         <button onClick={handleLogin} disabled={loading}
           className="bg-orange-600 text-white py-3 rounded-2xl font-semibold text-base hover:bg-orange-700 disabled:opacity-60 transition">
