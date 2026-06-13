@@ -39,8 +39,9 @@ export async function GET(request) {
     if (!user || !user.email) {
       return NextResponse.redirect(new URL("/login?error=failed", request.url));
     }
-
+    console.log("EMAIL:", user.email, "ALLOWED:", ALLOWED_EMAILS);
     if (!ALLOWED_EMAILS.includes(user.email)) {
+   
       return NextResponse.redirect(
         new URL("/login?error=unauthorized", request.url),
       );
