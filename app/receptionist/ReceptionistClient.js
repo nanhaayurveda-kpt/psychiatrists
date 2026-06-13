@@ -79,8 +79,7 @@ export default function ReceptionistClient() {
         return;
       }
       const patient = await patientRes.json();
-      const initialStatus =
-        hasPsychologist && sendToPsy ? "psychologist" : "waiting";
+      const initialStatus = "waiting";
       const prescRes = await fetch("/api/prescriptions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -105,7 +104,7 @@ export default function ReceptionistClient() {
         patient,
         prescription,
         isReturning: !!lookup,
-        sentToPsy: hasPsychologist && sendToPsy,
+        sentToPsy: false,
       });
       setName("");
       setPhone("");

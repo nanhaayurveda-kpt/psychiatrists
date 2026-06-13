@@ -367,6 +367,14 @@ export default function DoctorPrescriptionPage() {
             saving={saving}
             saved={saved}
             onSave={handleSave}
+            onSendToPsy={async () => {
+              await fetch(`/api/prescriptions/${id}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ status: "psychologist" }),
+              });
+              window.location.href = "/doctor";
+            }}
           />
         </div>
       </main>

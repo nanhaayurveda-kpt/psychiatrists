@@ -32,6 +32,8 @@ export async function PATCH(request) {
     "clinic_logo",
     "templates",
     "custom_meds",
+    "frequent_meds",
+    "frequent_meds",
   ];
   const update = {};
   for (const key of allowed) {

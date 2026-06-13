@@ -107,6 +107,8 @@ export default function PrescriptionForm({
   const [brandsMap, setBrandsMap] = useState({});
   const [templates, setTemplates] = useState({});
   const [customMeds, setCustomMeds] = useState({});
+  const [frequentMeds, setFrequentMeds] = useState({});
+  const [frequentMeds, setFrequentMeds] = useState({});
 
   useEffect(() => {
     fetch("/api/brands")
@@ -137,6 +139,15 @@ export default function PrescriptionForm({
           );
         } catch {
           setCustomMeds({});
+        }
+        try {
+          setFrequentMeds(
+            typeof data.frequent_meds === "string"
+              ? JSON.parse(data.frequent_meds || "{}")
+              : data.frequent_meds || {},
+          );
+        } catch {
+          setFrequentMeds({});
         }
       })
       .catch(() => {
@@ -320,8 +331,24 @@ export default function PrescriptionForm({
     }
   }
 
+  async function updateFrequentMeds() {
+    const updated = { ...frequentMeds };
+    for (const m of medicines) {
+      if (!m.name) continue;
+      updated[m.name] = (updated[m.name] || 0) + 1;
+    }
+    setFrequentMeds(updated);
+    try {
+      await fetch("/api/settings", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ frequent_meds: JSON.stringify(updated) }),
+      });
+    } catch: pass
+
   async function handleSave(andPrint) {
     await saveBrandMappings();
+    await updateFrequentMeds();
     onSave(andPrint);
   }
 
@@ -601,6 +628,46 @@ export default function PrescriptionForm({
                     </button>
                   </div>
                 ))}
+              </div>
+            </div>
+          )}
+
+          {/* Frequent Medicines */}
+          {Object.keys(frequentMeds).length > 0 && (
+            <div className="bg-white rounded-2xl shadow p-4">
+              <p className="font-semibold text-gray-700 mb-2">⚡ Quick Add</p>
+              <p className="text-xs text-gray-400 mb-3">Your most used medicines — tap to add</p>
+              <div className="flex flex-wrap gap-2">
+                {Object.entries(frequentMeds)
+                  .sort((a, b) => b[1] - a[1])
+                  .slice(0, 10)
+                  .map(([name]) => {
+                    const already = addedNames.has(name.toLowerCase());
+                    const mapped = brandsMap[name] || {};
+                    return (
+                      <button
+                        key={name}
+                        type="button"
+                        disabled={already}
+                        onClick={() => {
+                          if (already) return;
+                          const def = getMedicineDefaults(name) || { timing: [], food: "After food", duration: "7 days" };
+                          setMedicines((prev) => {
+                            const isEmpty = prev.length === 1 && !prev[0].name && !prev[0].dose && prev[0].timing.length === 0;
+                            const base = isEmpty ? [] : prev;
+                            return [...base, { name, dose: "", timing: def.timing, duration: def.duration, food: def.food, brand: mapped.brand || "" }];
+                          });
+                        }}
+                        className={`text-xs px-3 py-1.5 rounded-full border font-medium transition ${
+                          already
+                            ? "bg-green-50 border-green-300 text-green-600 opacity-60 cursor-not-allowed"
+                            : "bg-violet-50 border-violet-300 text-violet-700 hover:bg-violet-100 active:scale-95"
+                        }`}
+                      >
+                        {already ? "✓ " : ""}{name}{mapped.brand ? ` · ${mapped.brand}` : ""}
+                      </button>
+                    );
+                  })}
               </div>
             </div>
           )}
