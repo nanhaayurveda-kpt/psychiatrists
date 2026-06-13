@@ -108,7 +108,6 @@ export default function PrescriptionForm({
   const [templates, setTemplates] = useState({});
   const [customMeds, setCustomMeds] = useState({});
   const [frequentMeds, setFrequentMeds] = useState({});
-  const [frequentMeds, setFrequentMeds] = useState({});
 
   useEffect(() => {
     fetch("/api/brands")
