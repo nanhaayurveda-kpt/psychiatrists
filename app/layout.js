@@ -11,6 +11,18 @@ export const metadata = {
   title: "Psychiatrist Pro",
   description: "Where Mental Healing Meets Technology",
   manifest: "/manifest.json",
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+    ],
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "180x180" },
+      { url: "/apple-touch-icon-167.png", sizes: "167x167" },
+      { url: "/apple-touch-icon-152.png", sizes: "152x152" },
+      { url: "/apple-touch-icon-144.png", sizes: "144x144" },
+    ],
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
@@ -22,7 +34,7 @@ export const viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
-  themeColor: "#4f46e5",
+  themeColor: "#6d28d9", // यह line बदलो
 };
 
 export default async function RootLayout({ children }) {

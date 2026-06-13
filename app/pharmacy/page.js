@@ -24,7 +24,7 @@ export default function PharmacyQueuePage() {
     const res = await fetch('/api/prescriptions?status=doctor_done');
     if (!res.ok) {
       if (res.status === 401) window.location.href = '/login';
-      if (res.status === 403) window.location.href = '/expired';
+      if (res.status === 403) window.location.href = '/login';
       setLoading(false);
       return;
     }

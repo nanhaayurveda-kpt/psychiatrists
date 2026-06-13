@@ -30,7 +30,7 @@ export default function PharmacyPrescriptionPage() {
           return;
         }
         if (res.status === 403) {
-          window.location.href = "/expired";
+          window.location.href = "/login";
           return;
         }
         return;

@@ -46,7 +46,7 @@ export default function DoctorQueuePage() {
           return;
         }
         if (res.status === 403) {
-          window.location.href = "/expired";
+          window.location.href = "/login";
           return;
         }
         setLoading(false);
@@ -77,7 +77,7 @@ export default function DoctorQueuePage() {
           return;
         }
         if (s.status === 403) {
-          window.location.href = "/expired";
+          window.location.href = "/login";
           return;
         }
         if (!s.ok) {

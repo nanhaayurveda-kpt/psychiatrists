@@ -8,7 +8,6 @@ export default function DoctorPharmacyPage() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [search, setSearch] = useState('');
-
   const [pickerOpen, setPickerOpen] = useState(false);
   const [pickerCategory, setPickerCategory] = useState('All');
   const [pickerSearch, setPickerSearch] = useState('');
@@ -76,18 +75,11 @@ export default function DoctorPharmacyPage() {
   }
 
   function updateEntry(salt, field, value) {
-    setBrands((prev) => ({
-      ...prev,
-      [salt]: { ...prev[salt], [field]: value },
-    }));
+    setBrands((prev) => ({ ...prev, [salt]: { ...prev[salt], [field]: value } }));
   }
 
   function removeEntry(salt) {
-    setBrands((prev) => {
-      const next = { ...prev };
-      delete next[salt];
-      return next;
-    });
+    setBrands((prev) => { const next = { ...prev }; delete next[salt]; return next; });
   }
 
   const entries = Object.entries(brands).filter(([salt]) =>
@@ -103,118 +95,108 @@ export default function DoctorPharmacyPage() {
 
   return (
     <>
-      <main className="min-h-screen bg-emerald-50 p-4 pb-4">
-        <div className="max-w-md mx-auto">
-          <h1 className="text-xl font-bold text-emerald-800 mt-4 mb-1">Pharmacy Stock</h1>
-          <p className="text-xs text-gray-500 mb-4">
-            Pick a medicine, then add its brand, price, stock &amp; expiry
-          </p>
+      <div className="pt-4 pb-8">
+        <h1 className="text-xl font-bold text-violet-900 mb-1">Pharmacy Stock</h1>
+        <p className="text-xs text-gray-500 mb-4">
+          Pick a medicine, then add its brand, price, stock &amp; expiry
+        </p>
 
-          <button
-            type="button"
-            onClick={() => setPickerOpen(true)}
-            className="w-full bg-emerald-600 text-white py-3 rounded-2xl font-semibold text-sm mb-4"
-          >
-            + Add Medicine
-          </button>
+        <button
+          type="button"
+          onClick={() => setPickerOpen(true)}
+          className="w-full bg-violet-700 text-white py-3 rounded-2xl font-semibold text-sm mb-4 active:scale-95 transition"
+        >
+          + Add Medicine
+        </button>
 
-          {Object.keys(brands).length > 4 && (
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search added medicines..."
-              className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm mb-3 focus:outline-none focus:ring-2 focus:ring-emerald-400"
-            />
+        {Object.keys(brands).length > 4 && (
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search added medicines..."
+            className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm mb-3 focus:outline-none focus:ring-2 focus:ring-violet-400"
+          />
+        )}
+
+        <div className="flex flex-col gap-2 mb-4">
+          {entries.length === 0 && (
+            <p className="text-center text-gray-400 text-sm py-6">
+              No medicines added yet — tap &quot;+ Add Medicine&quot;
+            </p>
           )}
-
-          <div className="flex flex-col gap-2 mb-4">
-            {entries.length === 0 && (
-              <p className="text-center text-gray-400 text-sm py-6">No medicines added yet — tap &quot;+ Add Medicine&quot;</p>
-            )}
-            {entries.map(([salt, val]) => (
-              <div key={salt} className="bg-white rounded-2xl shadow p-3 flex flex-col gap-2">
-                <div className="flex justify-between items-center">
-                  <p className="text-sm font-semibold text-gray-700">
-                    {salt}
-                    {isLowStock(val) && (
-                      <span className="ml-2 text-[10px] font-bold text-white bg-red-500 px-2 py-0.5 rounded-full">
-                        LOW
-                      </span>
-                    )}
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => removeEntry(salt)}
-                    className="text-xs text-red-400"
-                  >
-                    Remove
-                  </button>
+          {entries.map(([salt, val]) => (
+            <div key={salt} className="bg-white rounded-2xl shadow p-3 flex flex-col gap-2">
+              <div className="flex justify-between items-center">
+                <p className="text-sm font-semibold text-gray-700">
+                  {salt}
+                  {isLowStock(val) && (
+                    <span className="ml-2 text-[10px] font-bold text-white bg-red-500 px-2 py-0.5 rounded-full">
+                      LOW
+                    </span>
+                  )}
+                </p>
+                <button type="button" onClick={() => removeEntry(salt)} className="text-xs text-red-400">
+                  Remove
+                </button>
+              </div>
+              <div className="flex gap-2">
+                <div className="flex-1">
+                  <label className="text-xs text-gray-500">Brand</label>
+                  <input
+                    type="text" value={val.brand || ''}
+                    onChange={(e) => updateEntry(salt, 'brand', e.target.value)}
+                    placeholder="Brand name"
+                    className="w-full border border-gray-200 rounded-lg px-2 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-violet-400 mt-1"
+                  />
                 </div>
-                <div className="flex gap-2">
-                  <div className="flex-1">
-                    <label className="text-xs font-semibold text-gray-700">Brand</label>
-                    <input
-                      type="text"
-                      value={val.brand || ''}
-                      onChange={(e) => updateEntry(salt, 'brand', e.target.value)}
-                      placeholder="Brand name"
-                      className="w-full border border-gray-200 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-400"
-                    />
-                  </div>
-                  <div className="w-20">
-                    <label className="text-xs font-semibold text-gray-700">Price ₹</label>
-                    <input
-                      type="text"
-                      value={val.price || ''}
-                      onChange={(e) => updateEntry(salt, 'price', e.target.value)}
-                      placeholder="85"
-                      inputMode="decimal"
-                      className="w-full border border-gray-200 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-400"
-                    />
-                  </div>
-                </div>
-                <div className="flex gap-2">
-                  <div className="flex-1">
-                    <label className="text-xs font-semibold text-gray-700">Stock (qty)</label>
-                    <input
-                      type="text"
-                      value={val.stock || ''}
-                      onChange={(e) => updateEntry(salt, 'stock', e.target.value)}
-                      placeholder="50"
-                      inputMode="numeric"
-                      className="w-full border border-gray-200 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-400"
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <label className="text-xs font-semibold text-gray-700">Expiry (month)</label>
-                    <input
-                      type="month"
-                      value={val.expiry || ''}
-                      onChange={(e) => updateEntry(salt, 'expiry', e.target.value)}
-                      className="w-full border border-gray-200 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-400"
-                    />
-                  </div>
+                <div className="w-20">
+                  <label className="text-xs text-gray-500">Price ₹</label>
+                  <input
+                    type="text" value={val.price || ''}
+                    onChange={(e) => updateEntry(salt, 'price', e.target.value)}
+                    placeholder="85" inputMode="decimal"
+                    className="w-full border border-gray-200 rounded-lg px-2 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-violet-400 mt-1"
+                  />
                 </div>
               </div>
-            ))}
-          </div>
-
-          {saved && (
-            <div className="bg-green-50 border border-green-200 text-green-800 text-sm rounded-xl p-3 mb-3 text-center">
-              ✓ Stock saved
+              <div className="flex gap-2">
+                <div className="flex-1">
+                  <label className="text-xs text-gray-500">Stock (qty)</label>
+                  <input
+                    type="text" value={val.stock || ''}
+                    onChange={(e) => updateEntry(salt, 'stock', e.target.value)}
+                    placeholder="50" inputMode="numeric"
+                    className="w-full border border-gray-200 rounded-lg px-2 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-violet-400 mt-1"
+                  />
+                </div>
+                <div className="flex-1">
+                  <label className="text-xs text-gray-500">Expiry (month)</label>
+                  <input
+                    type="month" value={val.expiry || ''}
+                    onChange={(e) => updateEntry(salt, 'expiry', e.target.value)}
+                    className="w-full border border-gray-200 rounded-lg px-2 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-violet-400 mt-1"
+                  />
+                </div>
+              </div>
             </div>
-          )}
-
-          <button
-            onClick={handleSave}
-            disabled={saving}
-            className="w-full bg-indigo-600 text-white py-3 rounded-2xl font-semibold text-base disabled:opacity-60 transition"
-          >
-            {saving ? 'Saving...' : 'Save All'}
-          </button>
+          ))}
         </div>
-      </main>
+
+        {saved && (
+          <div className="bg-violet-50 border border-violet-200 text-violet-800 text-sm rounded-xl p-3 mb-3 text-center">
+            ✓ Stock saved
+          </div>
+        )}
+
+        <button
+          onClick={handleSave}
+          disabled={saving}
+          className="w-full bg-violet-700 text-white py-3 rounded-2xl font-semibold text-base disabled:opacity-60 transition active:scale-95"
+        >
+          {saving ? 'Saving...' : 'Save All'}
+        </button>
+      </div>
 
       {/* Salt Picker Modal */}
       {pickerOpen && (
@@ -228,23 +210,20 @@ export default function DoctorPharmacyPage() {
           >
             <div className="p-4 border-b border-gray-200 flex justify-between items-center">
               <p className="font-bold text-gray-800">Select Medicine</p>
-              <button onClick={() => setPickerOpen(false)} className="text-gray-400 text-xl">×</button>
+              <button onClick={() => setPickerOpen(false)} className="text-gray-400 text-2xl leading-none">×</button>
             </div>
 
-            <div className="flex gap-1 overflow-x-auto p-3 border-b border-gray-100">
-              <button
-                type="button"
-                onClick={() => setPickerCategory('All')}
-                className={`text-xs px-3 py-1 rounded-full whitespace-nowrap border ${pickerCategory === 'All' ? 'bg-emerald-600 text-white border-emerald-600' : 'border-gray-300 text-gray-600'}`}
-              >
-                All
-              </button>
-              {CONDITIONS.map((c) => (
+            <div className="flex gap-1 overflow-x-auto p-3 border-b border-gray-100 scrollbar-none">
+              {['All', ...CONDITIONS].map((c) => (
                 <button
                   key={c}
                   type="button"
                   onClick={() => setPickerCategory(c)}
-                  className={`text-xs px-3 py-1 rounded-full whitespace-nowrap border ${pickerCategory === c ? 'bg-emerald-600 text-white border-emerald-600' : 'border-gray-300 text-gray-600'}`}
+                  className={`text-xs px-3 py-1.5 rounded-full whitespace-nowrap border transition ${
+                    pickerCategory === c
+                      ? 'bg-violet-700 text-white border-violet-700'
+                      : 'border-gray-300 text-gray-600'
+                  }`}
                 >
                   {c}
                 </button>
@@ -258,7 +237,7 @@ export default function DoctorPharmacyPage() {
                 value={pickerSearch}
                 onChange={(e) => setPickerSearch(e.target.value)}
                 placeholder="Search salt..."
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                className="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400"
               />
             </div>
 
@@ -274,10 +253,12 @@ export default function DoctorPharmacyPage() {
                       type="button"
                       onClick={() => pickSalt(s)}
                       disabled={added}
-                      className={`w-full text-left px-4 py-2.5 border-b border-gray-100 flex justify-between items-center ${added ? 'opacity-50' : 'hover:bg-emerald-50'}`}
+                      className={`w-full text-left px-4 py-3 border-b border-gray-100 flex justify-between items-center ${
+                        added ? 'opacity-50' : 'active:bg-violet-50'
+                      }`}
                     >
                       <span className="text-sm text-gray-800">{s}</span>
-                      {added && <span className="text-[10px] text-emerald-600">✓ added</span>}
+                      {added && <span className="text-[10px] text-violet-600 font-semibold">✓ added</span>}
                     </button>
                   );
                 })

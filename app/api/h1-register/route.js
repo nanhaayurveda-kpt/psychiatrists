@@ -1,41 +1,21 @@
 import { db } from "@/lib/db.js";
-import { prescriptions, patients, clinics } from "@/lib/schema.js";
+import { prescriptions, patients } from "@/lib/schema.js";
 import { eq, and, inArray } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/session.js";
-import { checkExpiry } from "@/lib/access.js";
-
-const DEVELOPER_EMAIL = "prasad.kamta@gmail.com";
 
 const H1_DRUGS = [
-  "alprazolam",
-  "clonazepam",
-  "diazepam",
-  "lorazepam",
-  "nitrazepam",
-  "etizolam",
-  "oxazepam",
-  "zolpidem",
-  "zopiclone",
-  "eszopiclone",
-  "methylphenidate",
-  "atomoxetine",
-  "buprenorphine",
-  "tramadol",
-  "codeine",
-  "pentazocine",
-  "phenobarbitone",
-  "phenobarbital",
-  "tapentadol",
-  "ketamine",
+  "alprazolam", "clonazepam", "diazepam", "lorazepam", "nitrazepam",
+  "etizolam", "oxazepam", "zolpidem", "zopiclone", "eszopiclone",
+  "methylphenidate", "atomoxetine", "buprenorphine", "tramadol",
+  "codeine", "pentazocine", "phenobarbitone", "phenobarbital",
+  "tapentadol", "ketamine",
 ];
 
 export async function GET(request) {
   const session = await getSession();
   if (!session)
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
-  if (!(await checkExpiry(session)))
-    return NextResponse.json({ error: "expired" }, { status: 403 });
 
   const { searchParams } = new URL(request.url);
   const from = searchParams.get("from") || "";
@@ -51,12 +31,7 @@ export async function GET(request) {
     })
     .from(prescriptions)
     .innerJoin(patients, eq(prescriptions.patient_id, patients.id))
-    .where(
-      and(
-        eq(prescriptions.clinic_id, session.clinic_id),
-        inArray(prescriptions.status, ["doctor_done", "dispensed"]),
-      ),
-    );
+    .where(inArray(prescriptions.status, ["doctor_done", "dispensed"]));
 
   const entries = [];
   for (const r of rows) {

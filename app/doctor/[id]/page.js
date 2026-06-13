@@ -75,7 +75,7 @@ export default function DoctorPrescriptionPage() {
         return;
       }
       if (res.status === 403) {
-        window.location.href = "/expired";
+        window.location.href = "/login";
         return;
       }
       if (!res.ok) return;
@@ -107,7 +107,7 @@ export default function DoctorPrescriptionPage() {
         return;
       }
       if (qRes.status === 403) {
-        window.location.href = "/expired";
+        window.location.href = "/login";
         return;
       }
       if (!qRes.ok) return;
@@ -151,7 +151,7 @@ export default function DoctorPrescriptionPage() {
       return;
     }
     if (res.status === 403) {
-      window.location.href = "/expired";
+      window.location.href = "/login";
       return;
     }
     if (!res.ok) return;
