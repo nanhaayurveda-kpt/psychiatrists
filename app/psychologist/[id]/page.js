@@ -149,9 +149,7 @@ export default function PsychologistAssessmentPage({ params }) {
           <p className="font-bold text-gray-800 text-lg">
             {prescription.patient_name}
           </p>
-          <p className="text-sm text-gray-500">
-            {prescription.patient_phone}
-          </p>
+          <p className="text-sm text-gray-500">{prescription.patient_phone}</p>
           {prescription.complaints && (
             <p className="text-xs text-gray-400 mt-1">
               Chief complaint: {prescription.complaints}
@@ -161,9 +159,7 @@ export default function PsychologistAssessmentPage({ params }) {
 
         {/* Rating Scales */}
         <div className="mb-4">
-          <p className="font-semibold text-gray-700 mb-2 px-1">
-            Rating Scales
-          </p>
+          <p className="font-semibold text-gray-700 mb-2 px-1">Rating Scales</p>
           <div className="flex flex-col gap-2">
             {SCALES.map((scale) => {
               const result = getResult(scale);
@@ -212,7 +208,12 @@ export default function PsychologistAssessmentPage({ params }) {
                               {qi + 1}. {q}
                             </p>
                             <div className="flex flex-wrap gap-1">
-                              {scale.options.map((opt) => (
+                              {(scale.use5
+                                ? scale.use5[qi]
+                                  ? scale.customOptions[0]
+                                  : scale.customOptions[1]
+                                : scale.options
+                              ).map((opt) => (
                                 <button
                                   key={opt.value}
                                   type="button"
@@ -360,9 +361,7 @@ export default function PsychologistAssessmentPage({ params }) {
           </div>
 
           <div>
-            <label className="text-xs text-gray-500">
-              Psychologist Notes
-            </label>
+            <label className="text-xs text-gray-500">Psychologist Notes</label>
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
