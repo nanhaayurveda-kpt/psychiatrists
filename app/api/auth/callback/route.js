@@ -41,7 +41,9 @@ export async function GET(request) {
     }
 
     if (!ALLOWED_EMAILS.includes(user.email)) {
-      return NextResponse.redirect(new URL("/login?error=unauthorized", request.url));
+      return NextResponse.redirect(
+        new URL("/login?error=unauthorized", request.url),
+      );
     }
 
     const [clinic] = await db.select().from(clinics);
@@ -51,14 +53,13 @@ export async function GET(request) {
 
     const token = await createSession({
       clinic_id: clinic.id,
-      name: clinic.name,
+      name: user.name || clinic.name,
       email: user.email,
       role: "doctor",
     });
 
     const response = NextResponse.redirect(new URL("/doctor", request.url));
     return setSessionCookieOnResponse(response, token);
-
   } catch (e) {
     console.error("Auth Callback Error:", e);
     return NextResponse.redirect(new URL("/login?error=failed", request.url));
