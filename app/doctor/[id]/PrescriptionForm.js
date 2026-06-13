@@ -344,7 +344,7 @@ export default function PrescriptionForm({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ frequent_meds: JSON.stringify(updated) }),
       });
-    } catch: pass
+    } catch (e) { /* ignore */ }
 
   async function handleSave(andPrint) {
     await saveBrandMappings();
