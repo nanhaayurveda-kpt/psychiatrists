@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 export default function ReceptionistClient() {
   const [name, setName] = useState("");
@@ -10,6 +10,7 @@ export default function ReceptionistClient() {
   const [success, setSuccess] = useState(null);
   const [error, setError] = useState("");
   const [lookup, setLookup] = useState(null);
+  const submittingRef = useRef(false);
   const [searching, setSearching] = useState(false);
 
   useEffect(() => {
@@ -42,6 +43,8 @@ export default function ReceptionistClient() {
   }, [phone]);
 
   async function handleSubmit() {
+    if (submittingRef.current) return;
+    submittingRef.current = true;
     if (!name.trim() || !phone.trim()) {
       setError("Name and phone are required");
       return;
@@ -104,6 +107,7 @@ export default function ReceptionistClient() {
       setError("Something went wrong. Try again.");
     } finally {
       setLoading(false);
+      submittingRef.current = false;
     }
   }
 

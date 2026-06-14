@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, use } from "react";
+import { useEffect, useState, use, useRef } from "react";
 import { SCALES } from "@/lib/scales";
 
 const COLOR = {
@@ -17,6 +17,7 @@ export default function PsychologistAssessmentPage({ params }) {
   const [prescription, setPrescription] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const sendingRef = useRef(false);
   const [done, setDone] = useState(false);
 
   const [mood, setMood] = useState(5);
@@ -86,8 +87,9 @@ export default function PsychologistAssessmentPage({ params }) {
     const answers = scale.questions.map((_, i) => d.answers[i] ?? 0);
     return scale.scoreFn(answers, d.extra || {});
   }
-
   async function handleSendToDoctor() {
+    if (sendingRef.current) return;
+    sendingRef.current = true;
     setSaving(true);
     const toSave = {};
     for (const scale of SCALES) {
@@ -123,6 +125,7 @@ export default function PsychologistAssessmentPage({ params }) {
       body: JSON.stringify({ status: "waiting" }),
     });
     setSaving(false);
+    sendingRef.current = false;
     setDone(true);
     setTimeout(() => {
       window.location.href = "/psychologist";

@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 
 export default function PharmacyPrescriptionPage() {
@@ -14,6 +14,7 @@ export default function PharmacyPrescriptionPage() {
   const [clinicInfo, setClinicInfo] = useState(null);
   const [brandsMap, setBrandsMap] = useState({});
   const [adding, setAdding] = useState(false);
+  const dispensingRef = useRef(false);
   const [newMed, setNewMed] = useState({
     salt: "",
     brand: "",
@@ -146,6 +147,8 @@ export default function PharmacyPrescriptionPage() {
   }, [medicines]);
 
   async function handleDispense() {
+    if (dispensingRef.current) return;
+    dispensingRef.current = true;
     setSaving(true);
 
     // Decrement stock for each dispensed medicine (match by salt name in brandsMap)
@@ -187,6 +190,7 @@ export default function PharmacyPrescriptionPage() {
       }),
     });
     setSaving(false);
+    dispensingRef.current = false;
     if (!res.ok) {
       alert("Failed to save");
       return;
