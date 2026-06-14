@@ -99,7 +99,6 @@ export default function ReceptionistClient() {
       });
       setName("");
       setPhone("");
-      setComplaints("");
       setWeight("");
       setBp("");
       setLookup(null);
