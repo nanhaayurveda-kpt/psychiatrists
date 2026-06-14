@@ -72,7 +72,7 @@ export default function PrintView({
 
       {complaints && (
         <p className="mb-2">
-          <strong>C/O:</strong> {complaints}
+         <strong>Chief Complaints:</strong> {complaints}
         </p>
       )}
 
