@@ -195,20 +195,6 @@ export default function DoctorPrescriptionPage() {
             </div>
           </div>
 
-          {/* Chief Complaints Card — editable, always visible */}
-          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-4">
-            <label className="block text-xs font-bold text-amber-700 uppercase tracking-wide mb-2">
-              📋 Chief Complaints
-            </label>
-            <textarea
-              value={complaints}
-              onChange={(e) => setComplaints(e.target.value)}
-              placeholder="Enter complaints..."
-              rows={2}
-              className="w-full bg-white border border-amber-200 rounded-xl px-3 py-2 text-sm text-gray-800 resize-none focus:outline-none focus:ring-2 focus:ring-amber-400"
-            />
-          </div>
-
           {/* Vitals Card */}
           {(prescription.weight || prescription.bp) && (
             <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4 mb-4">
