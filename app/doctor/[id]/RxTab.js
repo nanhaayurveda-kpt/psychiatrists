@@ -49,6 +49,7 @@ export default function RxTab({
   notes,
   setNotes,
   followupDate,
+  setFollowupDate,
   saving,
   saved,
   onSave,
