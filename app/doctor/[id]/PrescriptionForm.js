@@ -122,6 +122,12 @@ export default function PrescriptionForm({
       setSelectedCondition(hit[1]);
       setShowPicker(true);
     }
+    console.log("DEBUG useEffect:", {
+      diagnosis,
+      templatesKeys: Object.keys(templates),
+      medicinesLen: medicines.length,
+      firstMed: medicines[0],
+    });
     if (diagnosis && templates[diagnosis]) {
       const tpl = templates[diagnosis];
       if (Array.isArray(tpl) && tpl.length > 0) {
