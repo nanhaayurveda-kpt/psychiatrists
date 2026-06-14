@@ -334,8 +334,7 @@ function SettingsContent() {
         <p className="text-xs text-gray-400 -mt-2">
           Enter mobile number — PIN auto-fills as last 6 digits.
         </p>
-
-        {/* Receptionist */}
+        {/* Receptionist + Pharmacy */}
         {[
           {
             role: "receptionist",
@@ -344,6 +343,8 @@ function SettingsContent() {
             setPhone: setPhoneR,
             pin: pinR,
             setPin: setPinR,
+            email: emailR,
+            setEmail: setEmailR,
             showPin: showPinR,
             setShowPin: setShowPinR,
           },
@@ -354,6 +355,8 @@ function SettingsContent() {
             setPhone: setPhoneP,
             pin: pinP,
             setPin: setPinP,
+            email: emailP,
+            setEmail: setEmailP,
             showPin: showPinP,
             setShowPin: setShowPinP,
           },
@@ -365,6 +368,8 @@ function SettingsContent() {
             setPhone,
             pin,
             setPin,
+            email,
+            setEmail,
             showPin,
             setShowPin,
           }) => (
@@ -394,7 +399,7 @@ function SettingsContent() {
                 className={`${inputCls} mb-2`}
               />
               <label className="text-xs text-gray-500">PIN (6 digits)</label>
-              <div className="flex gap-2 mt-1">
+              <div className="flex gap-2 mt-1 mb-2">
                 <input
                   type={showPin ? "text" : "password"}
                   value={pin}
@@ -413,6 +418,14 @@ function SettingsContent() {
                   {showPin ? "🙈" : "👁️"}
                 </button>
               </div>
+              <label className="text-xs text-gray-500">Email</label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder={`${role}@email.com`}
+                className={inputCls}
+              />
             </div>
           ),
         )}
@@ -490,17 +503,15 @@ function SettingsContent() {
                 >
                   {showPinPsy ? "🙈" : "👁️"}
                 </button>
-                <label className="text-xs text-gray-500 mt-2 block">
-                  Email
-                </label>
-                <input
-                  type="email"
-                  value={emailPsy}
-                  onChange={(e) => setEmailPsy(e.target.value)}
-                  placeholder="psychologist@email.com"
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 mt-1"
-                />
               </div>
+              <label className="text-xs text-gray-500">Email</label>
+              <input
+                type="email"
+                value={emailPsy}
+                onChange={(e) => setEmailPsy(e.target.value)}
+                placeholder="psychologist@email.com"
+                className={inputCls}
+              />
             </div>
           )}
         </div>
