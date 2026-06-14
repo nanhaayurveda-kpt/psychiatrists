@@ -12,16 +12,6 @@ export default function ReceptionistClient() {
   const [error, setError] = useState("");
   const [lookup, setLookup] = useState(null);
   const [searching, setSearching] = useState(false);
-  const [hasPsychologist, setHasPsychologist] = useState(false);
-  const [sendToPsy, setSendToPsy] = useState(true);
-
-  useEffect(() => {
-    fetch("/api/settings")
-      .then((r) => (r.ok ? r.json() : null))
-      .then((data) => {
-        if (data) setHasPsychologist(!!data.has_psychologist);
-      });
-  }, []);
 
   useEffect(() => {
     if (!/^\d{10}$/.test(phone)) {
@@ -214,32 +204,6 @@ export default function ReceptionistClient() {
               </div>
             </div>
 
-            {/* Psychologist toggle */}
-            {hasPsychologist && (
-              <div className="flex items-center justify-between bg-purple-50 rounded-xl px-4 py-3">
-                <span className="text-sm font-medium text-gray-700">
-                  Send to Psychologist first?
-                </span>
-                <button
-                  type="button"
-                  onClick={() => setSendToPsy((p) => !p)}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${sendToPsy ? "bg-purple-500" : "bg-gray-300"}`}
-                >
-                  <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${sendToPsy ? "translate-x-6" : "translate-x-1"}`}
-                  />
-                </button>
-              </div>
-            )}
-
-            {/* Next stop */}
-            <div className="bg-gray-50 rounded-xl px-4 py-2 text-xs text-gray-500 flex items-center gap-2">
-              <span>Next stop:</span>
-              <span className="font-semibold text-indigo-700">
-                {hasPsychologist && sendToPsy ? "🧠 Psychologist" : "🩺 Doctor"}
-              </span>
-            </div>
-
             {error && <p className="text-red-500 text-sm">{error}</p>}
 
             {success && (
@@ -251,9 +215,7 @@ export default function ReceptionistClient() {
                   {success.patient.name} — {success.patient.phone}
                 </p>
                 <p className="text-xs text-gray-500 mt-1">
-                  {success.sentToPsy
-                    ? "→ Sent to Psychologist queue"
-                    : "→ Sent to Doctor queue"}
+                  → Sent to Doctor queue
                 </p>
               </div>
             )}
