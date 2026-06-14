@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 export default function ReceptionistClient() {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
-  const [complaints, setComplaints] = useState("");
   const [weight, setWeight] = useState("");
   const [bp, setBp] = useState("");
   const [loading, setLoading] = useState(false);
@@ -75,7 +74,6 @@ export default function ReceptionistClient() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           patient_id: patient.id,
-          complaints: complaints.trim(),
           status: initialStatus,
           weight: weight.trim(),
           bp: bp.trim(),
@@ -157,21 +155,6 @@ export default function ReceptionistClient() {
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Enter full name"
                 className="w-full border border-gray-300 rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400"
-              />
-            </div>
-
-            {/* Complaints */}
-            <div>
-              <label className="block text-sm font-semibold text-gray-600 mb-1">
-                Chief Complaints{" "}
-                <span className="text-gray-400 font-normal">(optional)</span>
-              </label>
-              <textarea
-                value={complaints}
-                onChange={(e) => setComplaints(e.target.value)}
-                placeholder="e.g. anxiety, sleeplessness..."
-                rows={3}
-                className="w-full border border-gray-300 rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none"
               />
             </div>
 
