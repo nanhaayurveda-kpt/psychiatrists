@@ -400,6 +400,7 @@ export default function PrescriptionForm({
           onSave={handleSave}
           saveAsTemplate={saveAsTemplate}
           templates={templates}
+          setTemplates={setTemplates}
           brandsMap={brandsMap}
           frequentMeds={frequentMeds}
           addedNames={addedNames}

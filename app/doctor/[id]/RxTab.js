@@ -54,6 +54,7 @@ export default function RxTab({
   onSave,
   saveAsTemplate,
   templates,
+  setTemplates,
   brandsMap,
   frequentMeds,
   addedNames,
@@ -186,7 +187,6 @@ export default function RxTab({
                 <button
                   type="button"
                   onClick={() => {
-                    setDiagnosis(diag);
                     setMedicines(meds.map((m) => ({ ...m })));
                   }}
                   className="text-xs text-indigo-600 border border-indigo-300 rounded-lg px-2 py-1 hover:bg-indigo-50 mr-1"
@@ -206,6 +206,7 @@ export default function RxTab({
                         templates: JSON.stringify(updated),
                       }),
                     });
+                    setTemplates(updated);
                   }}
                   className="text-xs text-red-500 border border-red-300 rounded-lg px-2 py-1 hover:bg-red-50"
                 >
