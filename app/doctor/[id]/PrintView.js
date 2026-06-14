@@ -70,12 +70,6 @@ export default function PrintView({
         </div>
       </div>
 
-      {complaints && (
-        <p className="mb-2">
-         <strong>Chief Complaints:</strong> {complaints}
-        </p>
-      )}
-
       {(prescription?.weight || prescription?.bp || prescription?.sugar) && (
         <p className="mb-2">
           <strong>Vitals:</strong>{" "}
