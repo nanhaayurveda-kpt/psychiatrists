@@ -1,32 +1,42 @@
-'use client';
-import { useState } from 'react';
+"use client";
+import { useState } from "react";
 
 export default function ReceptionistLoginPage() {
-  const [phone, setPhone] = useState('');
-  const [pin, setPin] = useState('');
-  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState(() =>
+    typeof window !== "undefined"
+      ? localStorage.getItem("receptionist_phone") || ""
+      : "",
+  );
+  const [pin, setPin] = useState("");
+  const [email, setEmail] = useState("");
   const [showPin, setShowPin] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   async function handleLogin() {
     if (phone.length !== 10 || pin.length !== 6 || !email.trim()) {
-      setError('Enter 10-digit mobile, 6-digit PIN and email');
+      setError("Enter 10-digit mobile, 6-digit PIN and email");
       return;
     }
     setLoading(true);
-    setError('');
-    const res = await fetch('/api/auth/pin', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ phone, pin, email: email.trim(), role: 'receptionist' }),
+    setError("");
+    const res = await fetch("/api/auth/pin", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        phone,
+        pin,
+        email: email.trim(),
+        role: "receptionist",
+      }),
     });
     const data = await res.json();
     setLoading(false);
     if (data.success) {
-      window.location.href = '/receptionist';
+      localStorage.setItem("receptionist_phone", phone);
+      window.location.href = "/receptionist";
     } else {
-      setError(data.error || 'Login failed');
+      setError(data.error || "Login failed");
     }
   }
 
@@ -34,23 +44,31 @@ export default function ReceptionistLoginPage() {
     <main className="min-h-screen flex flex-col items-center justify-center bg-indigo-50 p-6">
       <div className="bg-white rounded-3xl shadow p-8 w-full max-w-sm flex flex-col gap-5">
         <div className="text-center">
-          <h1 className="text-xl font-bold text-indigo-800">Receptionist Login</h1>
-          <p className="text-gray-400 text-sm mt-1">Enter your mobile, PIN and email</p>
+          <h1 className="text-xl font-bold text-indigo-800">
+            Receptionist Login
+          </h1>
+          <p className="text-gray-400 text-sm mt-1">
+            Enter your mobile, PIN and email
+          </p>
         </div>
         <input
           type="tel"
           inputMode="numeric"
           value={phone}
-          onChange={e => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
+          onChange={(e) =>
+            setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))
+          }
           placeholder="10-digit mobile number"
           maxLength={10}
           className="w-full border border-gray-300 rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400"
         />
         <div className="flex gap-2">
           <input
-            type={showPin ? 'text' : 'password'}
+            type={showPin ? "text" : "password"}
             value={pin}
-            onChange={e => setPin(e.target.value.replace(/\D/g, '').slice(0, 6))}
+            onChange={(e) =>
+              setPin(e.target.value.replace(/\D/g, "").slice(0, 6))
+            }
             placeholder="6-digit PIN"
             maxLength={6}
             inputMode="numeric"
@@ -58,24 +76,27 @@ export default function ReceptionistLoginPage() {
           />
           <button
             type="button"
-            onClick={() => setShowPin(p => !p)}
+            onClick={() => setShowPin((p) => !p)}
             className="text-xl px-4 border border-gray-300 rounded-xl text-gray-500 hover:bg-gray-50"
-            aria-label={showPin ? 'Hide PIN' : 'Show PIN'}
+            aria-label={showPin ? "Hide PIN" : "Show PIN"}
           >
-            {showPin ? '🙈' : '👁️'}
+            {showPin ? "🙈" : "👁️"}
           </button>
         </div>
         <input
           type="email"
           value={email}
-          onChange={e => setEmail(e.target.value)}
+          onChange={(e) => setEmail(e.target.value)}
           placeholder="Your email address"
           className="w-full border border-gray-300 rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400"
         />
         {error && <p className="text-red-500 text-sm text-center">{error}</p>}
-        <button onClick={handleLogin} disabled={loading}
-          className="bg-indigo-600 text-white py-3 rounded-2xl font-semibold text-base hover:bg-indigo-700 disabled:opacity-60 transition">
-          {loading ? 'Logging in...' : 'Login'}
+        <button
+          onClick={handleLogin}
+          disabled={loading}
+          className="bg-indigo-600 text-white py-3 rounded-2xl font-semibold text-base hover:bg-indigo-700 disabled:opacity-60 transition"
+        >
+          {loading ? "Logging in..." : "Login"}
         </button>
       </div>
     </main>
