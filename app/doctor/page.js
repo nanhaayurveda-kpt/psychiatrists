@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 function fmtIST(visitDate) {
   if (!visitDate) return "";
@@ -32,6 +33,20 @@ function waitTime(visitDate) {
 
 export default function DoctorQueuePage() {
   const [queue, setQueue] = useState([]);
+  const router = useRouter();
+
+  async function deleteToken(e, pid) {
+    e.stopPropagation();
+    e.preventDefault();
+    if (!confirm(`Delete Token #${pid}? This removes this visit entry.`))
+      return;
+    const res = await fetch(`/api/prescriptions/${pid}`, { method: "DELETE" });
+    if (!res.ok) {
+      alert("Delete failed");
+      return;
+    }
+    setQueue((prev) => prev.filter((x) => x.id !== pid));
+  }
   const [loading, setLoading] = useState(true);
   const [lastRefresh, setLastRefresh] = useState(null);
   const [clinic, setClinic] = useState(null);
@@ -192,9 +207,18 @@ export default function DoctorQueuePage() {
                       {p.patient_name}
                     </span>
                   </div>
-                  <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full">
-                    {waitTime(p.visit_date)}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full">
+                      {waitTime(p.visit_date)}
+                    </span>
+                    <button
+                      onClick={(e) => deleteToken(e, p.id)}
+                      className="text-red-500 text-sm px-2 py-0.5 rounded-lg hover:bg-red-50"
+                      title="Delete this token"
+                    >
+                      🗑️
+                    </button>
+                  </div>
                 </div>
                 <span className="text-sm text-gray-500 ml-9">
                   {p.patient_phone}
