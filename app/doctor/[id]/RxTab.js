@@ -616,8 +616,14 @@ export default function RxTab({
         </label>
         <input
           type="date"
-          value={followupDate}
-          onChange={(e) => setFollowupDate(e.target.value)}
+          defaultValue={followupDate}
+          key={followupDate}
+          onChange={(e) => {
+            if (e.target.value) setFollowupDate(e.target.value);
+          }}
+          onBlur={(e) => {
+            if (!e.target.value) setFollowupDate("");
+          }}
           className="w-full border border-gray-300 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400"
         />
         <div className="flex flex-wrap gap-1 mt-2">
