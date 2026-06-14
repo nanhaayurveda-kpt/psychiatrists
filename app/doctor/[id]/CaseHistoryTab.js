@@ -8,6 +8,8 @@ Current Episode:
 `;
 
 export default function CaseHistoryTab({
+  diagnosis,
+  setDiagnosis,
   detailedHistory,
   setDetailedHistory,
   saving,
@@ -19,6 +21,40 @@ export default function CaseHistoryTab({
 
   return (
     <>
+      {/* Diagnosis */}
+      <div className="bg-white rounded-2xl shadow p-4">
+        <label className="block font-semibold text-gray-700 mb-2">
+          Diagnosis
+        </label>
+        <input
+          type="text"
+          list="diagnosis-list"
+          value={diagnosis}
+          onChange={(e) => setDiagnosis(e.target.value)}
+          placeholder="Type or pick — e.g. Depression, Anxiety..."
+          className="w-full border border-gray-300 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400"
+        />
+        <datalist id="diagnosis-list">
+          {[
+            "Insomnia",
+            "Migraine",
+            "Epilepsy",
+            "Depression",
+            "Anxiety",
+            "Bipolar Disorder",
+            "Schizophrenia",
+            "OCD",
+            "ADHD",
+            "PTSD",
+            "Substance Use Disorder",
+            "Sexual Health",
+          ].map((v) => (
+            <option key={v} value={v} />
+          ))}
+        </datalist>
+      </div>
+
+      {/* Case History */}
       <div className="bg-white rounded-2xl shadow p-4">
         <div className="flex justify-between items-center mb-2">
           <label className="block font-semibold text-gray-700">

@@ -44,7 +44,6 @@ function brandKey(med) {
 
 export default function RxTab({
   diagnosis,
-  setDiagnosis,
   medicines,
   setMedicines,
   notes,
@@ -154,39 +153,20 @@ export default function RxTab({
 
   return (
     <>
-      {/* Diagnosis */}
-      <div className="bg-white rounded-2xl shadow p-4">
-        <label className="block font-semibold text-gray-700 mb-2">
-          Diagnosis
-        </label>
-        <input
-          type="text"
-          list="diagnosis-list"
-          value={diagnosis}
-          onChange={(e) => setDiagnosis(e.target.value)}
-          placeholder="Type or pick — e.g. Depression, Anxiety..."
-          className="w-full border border-gray-300 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400"
-        />
-        <datalist id="diagnosis-list">
-          {[
-            "Insomnia",
-            "Migraine",
-            "Epilepsy",
-            "Depression",
-            "Anxiety",
-            "Bipolar Disorder",
-            "Schizophrenia",
-            "OCD",
-            "ADHD",
-            "PTSD",
-            "Substance Use Disorder",
-            "Sexual Health",
-          ].map((v) => (
-            <option key={v} value={v} />
-          ))}
-        </datalist>
+      {/* Diagnosis (read-only — set in Case History tab) */}
+      <div className="bg-white rounded-2xl shadow p-4 flex items-center justify-between">
+        <div>
+          <p className="text-xs text-gray-400 mb-1">Diagnosis</p>
+          <p className="font-semibold text-gray-800">
+            {diagnosis || "Not set"}
+          </p>
+        </div>
+        {!diagnosis && (
+          <span className="text-xs text-amber-600 bg-amber-50 px-2 py-1 rounded-lg">
+            Set in Case History tab
+          </span>
+        )}
       </div>
-
       {/* Templates */}
       {Object.keys(templates).length > 0 && (
         <div className="bg-white rounded-2xl shadow p-4">

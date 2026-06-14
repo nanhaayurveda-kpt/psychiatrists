@@ -377,6 +377,8 @@ export default function PrescriptionForm({
 
       {activeTab === "case" && (
         <CaseHistoryTab
+          diagnosis={diagnosis}
+          setDiagnosis={setDiagnosis}
           detailedHistory={detailedHistory}
           setDetailedHistory={setDetailedHistory}
           saving={saving}
@@ -387,7 +389,6 @@ export default function PrescriptionForm({
       {activeTab === "rx" && (
         <RxTab
           diagnosis={diagnosis}
-          setDiagnosis={setDiagnosis}
           medicines={medicines}
           setMedicines={setMedicines}
           notes={notes}
