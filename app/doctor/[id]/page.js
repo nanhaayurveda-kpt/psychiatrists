@@ -60,6 +60,7 @@ export default function DoctorPrescriptionPage() {
   const [tests, setTests] = useState("");
   const [mse, setMse] = useState({ ...MSE_DEFAULT });
   const [notes, setNotes] = useState("");
+  const [detailedHistory, setDetailedHistory] = useState("");
   const [followupDate, setFollowupDate] = useState("");
   const [medicines, setMedicines] = useState([
     { name: "", dose: "", timing: [], duration: "7 days", food: "After food" },
@@ -87,6 +88,7 @@ export default function DoctorPrescriptionPage() {
       if (data.tests) setTests(data.tests);
       if (data.mse) setMse(parseMSE(data.mse));
       if (data.notes) setNotes(data.notes);
+      if (data.detailed_history) setDetailedHistory(data.detailed_history);
       if (data.followup_date) setFollowupDate(data.followup_date);
       if (data.medicines) {
         const parsed = parseMeds(data.medicines);
@@ -141,6 +143,7 @@ export default function DoctorPrescriptionPage() {
         mse: JSON.stringify(mse),
         medicines: JSON.stringify(medicines),
         notes,
+        detailed_history: detailedHistory,
         followup_date: followupDate,
         status: "doctor_done",
       }),
@@ -361,6 +364,8 @@ export default function DoctorPrescriptionPage() {
             setMedicines={setMedicines}
             notes={notes}
             setNotes={setNotes}
+            detailedHistory={detailedHistory}
+            setDetailedHistory={setDetailedHistory}
             followupDate={followupDate}
             setFollowupDate={setFollowupDate}
             history={history}
@@ -368,10 +373,20 @@ export default function DoctorPrescriptionPage() {
             saved={saved}
             onSave={handleSave}
             onSendToPsy={async () => {
+              if (!detailedHistory.trim()) {
+                alert(
+                  "Please record detailed history before sending to Psychologist.",
+                );
+                return;
+              }
+              setSaving(true);
               await fetch(`/api/prescriptions/${id}`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ status: "psychologist" }),
+                body: JSON.stringify({
+                  detailed_history: detailedHistory,
+                  status: "psychologist",
+                }),
               });
               window.location.href = "/doctor";
             }}
