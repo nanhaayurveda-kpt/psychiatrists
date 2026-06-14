@@ -6,8 +6,10 @@ import {
   CONDITIONS,
   getMedicineDefaults,
 } from "@/lib/medicines";
+import CaseHistoryTab from "./CaseHistoryTab";
 import RxTab from "./RxTab";
-import ExamHistoryTab from "./ExamHistoryTab";
+import AssessmentTab from "./AssessmentTab";
+import VisitHistoryTab from "./VisitHistoryTab";
 
 function splitDoses(doseStr) {
   return (doseStr || "")
@@ -22,14 +24,8 @@ function brandKey(med) {
 }
 
 export default function PrescriptionForm({
-  complaints,
-  setComplaints,
   diagnosis,
   setDiagnosis,
-  mse,
-  setMse,
-  tests,
-  setTests,
   medicines,
   setMedicines,
   notes,
@@ -39,12 +35,13 @@ export default function PrescriptionForm({
   followupDate,
   setFollowupDate,
   history,
+  assessment,
   saving,
   saved,
   onSave,
   onSendToPsy,
 }) {
-  const [activeTab, setActiveTab] = useState("rx");
+  const [activeTab, setActiveTab] = useState("case");
   const [showPicker, setShowPicker] = useState(true);
   const [search, setSearch] = useState("");
   const [selectedCondition, setSelectedCondition] = useState("All");
@@ -352,28 +349,40 @@ export default function PrescriptionForm({
   const pickedCount = Object.keys(pickedSalts).length;
   const interactions = useMemo(() => checkInteractions(medicines), [medicines]);
 
+  const TABS = [
+    ["case", "📝 Case History"],
+    ["rx", "💊 Prescription"],
+    ["assessment", "🧠 Assessment"],
+    [
+      "history",
+      `📋 Visit History${history.length > 0 ? ` (${history.length})` : ""}`,
+    ],
+  ];
+
   return (
     <div className="flex flex-col gap-4 pb-20">
       {/* Tabs */}
-      <div className="flex gap-1 bg-gray-100 rounded-2xl p-1 sticky top-0 z-10">
-        {[
-          ["rx", "💊 Prescription"],
-          ["exam", "📝 Exam"],
-          [
-            "history",
-            `📋 History${history.length > 0 ? ` (${history.length})` : ""}`,
-          ],
-        ].map(([key, label]) => (
+      <div className="flex gap-1 bg-gray-100 rounded-2xl p-1 sticky top-0 z-10 overflow-x-auto">
+        {TABS.map(([key, label]) => (
           <button
             key={key}
             type="button"
             onClick={() => setActiveTab(key)}
-            className={`flex-1 py-2.5 rounded-xl text-sm font-semibold transition ${activeTab === key ? "bg-white text-emerald-700 shadow" : "text-gray-500"}`}
+            className={`flex-1 py-2.5 px-1 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition ${activeTab === key ? "bg-white text-emerald-700 shadow" : "text-gray-500"}`}
           >
             {label}
           </button>
         ))}
       </div>
+
+      {activeTab === "case" && (
+        <CaseHistoryTab
+          detailedHistory={detailedHistory}
+          setDetailedHistory={setDetailedHistory}
+          saving={saving}
+          onSendToPsy={onSendToPsy}
+        />
+      )}
 
       {activeTab === "rx" && (
         <RxTab
@@ -383,14 +392,11 @@ export default function PrescriptionForm({
           setMedicines={setMedicines}
           notes={notes}
           setNotes={setNotes}
-          detailedHistory={detailedHistory}
-          setDetailedHistory={setDetailedHistory}
           followupDate={followupDate}
           setFollowupDate={setFollowupDate}
           saving={saving}
           saved={saved}
           onSave={handleSave}
-          onSendToPsy={onSendToPsy}
           saveAsTemplate={saveAsTemplate}
           templates={templates}
           brandsMap={brandsMap}
@@ -421,15 +427,10 @@ export default function PrescriptionForm({
         />
       )}
 
-      {(activeTab === "exam" || activeTab === "history") && (
-        <ExamHistoryTab
-          activeTab={activeTab}
-          complaints={complaints}
-          setComplaints={setComplaints}
-          mse={mse}
-          setMse={setMse}
-          tests={tests}
-          setTests={setTests}
+      {activeTab === "assessment" && <AssessmentTab assessment={assessment} />}
+
+      {activeTab === "history" && (
+        <VisitHistoryTab
           history={history}
           setMedicines={setMedicines}
           setActiveTab={setActiveTab}

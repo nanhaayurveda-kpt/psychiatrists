@@ -38,6 +38,7 @@ export async function GET(request) {
       tests: prescriptions.tests,
       medicines: prescriptions.medicines,
       notes: prescriptions.notes,
+      detailed_history: prescriptions.detailed_history,
       followup_date: prescriptions.followup_date,
       status: prescriptions.status,
       patient_name: patients.name,

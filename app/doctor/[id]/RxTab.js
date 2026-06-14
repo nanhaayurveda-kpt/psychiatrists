@@ -49,14 +49,10 @@ export default function RxTab({
   setMedicines,
   notes,
   setNotes,
-  detailedHistory,
-  setDetailedHistory,
   followupDate,
-  setFollowupDate,
   saving,
   saved,
   onSave,
-  onSendToPsy,
   saveAsTemplate,
   templates,
   brandsMap,
@@ -682,19 +678,6 @@ export default function RxTab({
           className="w-full border border-gray-200 rounded-xl px-4 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-emerald-400"
         />
       </div>
-      {/* Detailed History */}
-      <div className="bg-white rounded-2xl shadow p-4">
-        <label className="block font-semibold text-gray-700 mb-2">
-          Detailed History (required before Psychologist referral)
-        </label>
-        <textarea
-          value={detailedHistory}
-          onChange={(e) => setDetailedHistory(e.target.value)}
-          placeholder="Family history, personal history, past psychiatric/medical history, substance use..."
-          rows={4}
-          className="w-full border border-gray-200 rounded-xl px-4 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-emerald-400"
-        />
-      </div>
 
       {saved && (
         <div className="bg-green-50 border border-green-200 text-green-800 text-sm rounded-xl p-3 text-center">
@@ -718,17 +701,6 @@ export default function RxTab({
           Save & Print
         </button>
       </div>
-
-      <button
-        type="button"
-        onClick={onSendToPsy}
-        disabled={saving || !detailedHistory.trim()}
-        className="w-full mt-2 bg-purple-600 text-white py-3 rounded-xl font-semibold text-sm hover:bg-purple-700 disabled:opacity-60 transition"
-      >
-        🧠 Send to Psychologist{" "}
-        {!detailedHistory.trim() && "(record history first)"}
-      </button>
-
       <button
         type="button"
         onClick={saveAsTemplate}
