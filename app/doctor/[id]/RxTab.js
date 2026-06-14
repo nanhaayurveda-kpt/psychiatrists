@@ -188,7 +188,11 @@ export default function RxTab({
                 <button
                   type="button"
                   onClick={() => {
-                    setMedicines(meds.map((m) => ({ ...m })));
+                    setMedicines(
+                      meds
+                        .filter((m) => m.name && m.name.trim())
+                        .map((m) => ({ ...m })),
+                    );
                   }}
                   className="text-xs text-indigo-600 border border-indigo-300 rounded-lg px-2 py-1 hover:bg-indigo-50 mr-1"
                 >
