@@ -13,6 +13,8 @@ export default function CaseHistoryTab({
   detailedHistory,
   setDetailedHistory,
   saving,
+  saved,
+  onSave,
   onSendToPsy,
 }) {
   function insertTemplate() {
@@ -78,9 +80,25 @@ export default function CaseHistoryTab({
           className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-emerald-400"
         />
         <p className="text-[11px] text-gray-400 mt-2">
-          Write freely — onset, duration of illness, past treatment history, family history, current episode details, etc.
+          Write freely — onset, duration of illness, past treatment history,
+          family history, current episode details, etc.
         </p>
       </div>
+
+      {saved && (
+        <div className="bg-green-50 border border-green-200 text-green-800 text-sm rounded-xl p-3 text-center">
+          ✓ Saved
+        </div>
+      )}
+
+      <button
+        type="button"
+        onClick={onSave}
+        disabled={saving}
+        className="w-full bg-emerald-600 text-white py-3 rounded-xl font-semibold text-sm hover:bg-emerald-700 disabled:opacity-60 transition"
+      >
+        {saving ? "Saving..." : "💾 Save"}
+      </button>
 
       <button
         type="button"

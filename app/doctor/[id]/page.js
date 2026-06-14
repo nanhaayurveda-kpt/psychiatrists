@@ -130,6 +130,25 @@ export default function DoctorPrescriptionPage() {
     load();
   }, [id]);
 
+  async function handleSaveHistory() {
+    setSaving(true);
+    const res = await fetch(`/api/prescriptions/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        diagnosis,
+        detailed_history: detailedHistory,
+      }),
+    });
+    setSaving(false);
+    if (res.status === 401 || res.status === 403) {
+      window.location.href = "/login";
+      return;
+    }
+    if (!res.ok) return;
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2000);
+  }
   async function handleSave(andPrint = false) {
     setSaving(true);
     const res = await fetch(`/api/prescriptions/${id}`, {
@@ -222,6 +241,7 @@ export default function DoctorPrescriptionPage() {
           )}
 
           <PrescriptionForm
+            onSaveHistory={handleSaveHistory}
             diagnosis={diagnosis}
             setDiagnosis={setDiagnosis}
             medicines={medicines}

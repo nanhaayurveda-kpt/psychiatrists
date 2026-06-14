@@ -24,6 +24,7 @@ function brandKey(med) {
 }
 
 export default function PrescriptionForm({
+  onSaveHistory,
   diagnosis,
   setDiagnosis,
   medicines,
@@ -382,6 +383,8 @@ export default function PrescriptionForm({
           detailedHistory={detailedHistory}
           setDetailedHistory={setDetailedHistory}
           saving={saving}
+          saved={saved}
+          onSave={onSaveHistory}
           onSendToPsy={onSendToPsy}
         />
       )}
