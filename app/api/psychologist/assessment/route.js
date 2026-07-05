@@ -1,6 +1,6 @@
 import { db } from '@/lib/db.js';
 import { prescriptions, patients, assessments } from '@/lib/schema.js';
-import { eq, and } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 import { getSession } from '@/lib/session.js';
 
@@ -24,10 +24,7 @@ export async function GET(request) {
   })
     .from(prescriptions)
     .innerJoin(patients, eq(prescriptions.patient_id, patients.id))
-    .where(and(
-      eq(prescriptions.id, prescription_id),
-      eq(prescriptions.clinic_id, session.clinic_id)
-    ));
+    .where(eq(prescriptions.id, prescription_id));
 
   if (rows.length === 0)
     return NextResponse.json({ error: 'Not found' }, { status: 404 });
@@ -35,10 +32,7 @@ export async function GET(request) {
   // Fetch existing assessment if any
   const existing = await db.select()
     .from(assessments)
-    .where(and(
-      eq(assessments.prescription_id, prescription_id),
-      eq(assessments.clinic_id, session.clinic_id)
-    ));
+    .where(eq(assessments.prescription_id, prescription_id));
 
   return NextResponse.json({
     prescription: rows[0],
@@ -58,10 +52,7 @@ export async function POST(request) {
   // Upsert — पहले check करो exist करता है क्या
   const existing = await db.select()
     .from(assessments)
-    .where(and(
-      eq(assessments.prescription_id, prescription_id),
-      eq(assessments.clinic_id, session.clinic_id)
-    ));
+    .where(eq(assessments.prescription_id, prescription_id));
 
   if (existing.length > 0) {
     await db.update(assessments)
@@ -71,7 +62,6 @@ export async function POST(request) {
     await db.insert(assessments)
       .values({
         prescription_id,
-        clinic_id: session.clinic_id,
         mood,
         history,
         symptoms,

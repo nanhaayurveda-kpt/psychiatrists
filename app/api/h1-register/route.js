@@ -1,6 +1,6 @@
 import { db } from '@/lib/db.js';
 import { prescriptions, patients, clinics } from '@/lib/schema.js';
-import { eq, and } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 import { getSession } from '@/lib/session.js';
 
@@ -44,10 +44,7 @@ export async function GET(request) {
   })
     .from(prescriptions)
     .innerJoin(patients, eq(prescriptions.patient_id, patients.id))
-    .where(and(
-      eq(prescriptions.clinic_id, session.clinic_id),
-      eq(prescriptions.status, 'doctor_done')
-    ));
+    .where(eq(prescriptions.status, 'doctor_done'));
 
   const entries = [];
   for (const r of rows) {

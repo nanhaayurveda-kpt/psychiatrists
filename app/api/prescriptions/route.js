@@ -22,14 +22,12 @@ export async function GET(request) {
   if (!session) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   if (!(await checkExpiry(session))) return NextResponse.json({ error: 'expired' }, { status: 403 });
 
-  const clinic_id = session.clinic_id;
   const { searchParams } = new URL(request.url);
   const status = searchParams.get('status');
   const patient_id = searchParams.get('patient_id');
 
   const rows = await db.select({
     id: prescriptions.id,
-    clinic_id: prescriptions.clinic_id,
     patient_id: prescriptions.patient_id,
     visit_date: prescriptions.visit_date,
     complaints: prescriptions.complaints,
@@ -42,8 +40,7 @@ export async function GET(request) {
     patient_phone: patients.phone,
   })
     .from(prescriptions)
-    .innerJoin(patients, eq(prescriptions.patient_id, patients.id))
-    .where(eq(prescriptions.clinic_id, clinic_id));
+    .innerJoin(patients, eq(prescriptions.patient_id, patients.id));
 
   let filtered = rows;
   if (status) filtered = filtered.filter(r => r.status === status);
@@ -57,7 +54,6 @@ export async function POST(request) {
   if (!session) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   if (!(await checkExpiry(session))) return NextResponse.json({ error: 'expired' }, { status: 403 });
 
-  const clinic_id = session.clinic_id;
   const { patient_id, complaints, status } = await request.json();
 
   if (!patient_id)
@@ -66,13 +62,12 @@ export async function POST(request) {
   const initialStatus = status || 'waiting';
 
   const result = await db.insert(prescriptions)
-    .values({ patient_id, complaints: complaints || '', clinic_id, status: initialStatus });
+    .values({ patient_id, complaints: complaints || '', status: initialStatus });
 
   return NextResponse.json({
     id: Number(result.lastInsertRowid),
     patient_id,
     complaints: complaints || '',
-    clinic_id,
     status: initialStatus,
   });
 }

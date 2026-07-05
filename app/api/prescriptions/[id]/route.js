@@ -1,6 +1,6 @@
 import { db } from '@/lib/db.js';
 import { prescriptions, clinics } from '@/lib/schema.js';
-import { eq, and } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 import { getSession } from '@/lib/session.js';
 
@@ -27,10 +27,7 @@ export async function GET(request, { params }) {
   if (!pid) return NextResponse.json({ error: 'Invalid id' }, { status: 400 });
 
   const result = await db.select().from(prescriptions)
-    .where(and(
-      eq(prescriptions.id, pid),
-      eq(prescriptions.clinic_id, session.clinic_id)
-    ));
+    .where(eq(prescriptions.id, pid));
   if (result.length === 0) return NextResponse.json({ error: 'Not found' }, { status: 404 });
   return NextResponse.json(result[0]);
 }
@@ -53,16 +50,10 @@ export async function PATCH(request, { params }) {
 
   await db.update(prescriptions)
     .set(update)
-    .where(and(
-      eq(prescriptions.id, pid),
-      eq(prescriptions.clinic_id, session.clinic_id)
-    ));
+    .where(eq(prescriptions.id, pid));
 
   const [updated] = await db.select().from(prescriptions)
-    .where(and(
-      eq(prescriptions.id, pid),
-      eq(prescriptions.clinic_id, session.clinic_id)
-    ));
+    .where(eq(prescriptions.id, pid));
 
   if (!updated) return NextResponse.json({ error: 'Not found' }, { status: 404 });
   return NextResponse.json(updated);

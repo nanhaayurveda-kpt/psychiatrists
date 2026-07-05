@@ -28,19 +28,20 @@ export async function GET(request) {
   const today = new Date();
   const todayStr = today.toISOString().slice(0, 10);
 
-  const rows = await db.select({
+  const [clinicRow] = await db.select().from(clinics).limit(1);
+
+  const baseRows = await db.select({
     prescription_id: prescriptions.id,
     followup_date: prescriptions.followup_date,
     visit_date: prescriptions.visit_date,
     patient_id: prescriptions.patient_id,
     patient_name: patients.name,
     patient_phone: patients.phone,
-    clinic_name: clinics.name,
   })
     .from(prescriptions)
-    .innerJoin(patients, eq(prescriptions.patient_id, patients.id))
-    .innerJoin(clinics, eq(prescriptions.clinic_id, clinics.id))
-    .where(eq(prescriptions.clinic_id, session.clinic_id));
+    .innerJoin(patients, eq(prescriptions.patient_id, patients.id));
+
+  const rows = baseRows.map((r) => ({ ...r, clinic_name: clinicRow?.name || '' }));
 
   let filtered = rows.filter((r) => r.followup_date && r.followup_date !== '');
 

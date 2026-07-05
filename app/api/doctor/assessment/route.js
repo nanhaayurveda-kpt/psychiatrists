@@ -1,6 +1,6 @@
 import { db } from '@/lib/db.js';
 import { assessments } from '@/lib/schema.js';
-import { eq, and } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 import { getSession } from '@/lib/session.js';
 
@@ -16,10 +16,7 @@ export async function GET(request) {
 
   const rows = await db.select()
     .from(assessments)
-    .where(and(
-      eq(assessments.prescription_id, prescription_id),
-      eq(assessments.clinic_id, session.clinic_id)
-    ));
+    .where(eq(assessments.prescription_id, prescription_id));
 
   if (rows.length === 0) return NextResponse.json(null);
   return NextResponse.json(rows[0]);

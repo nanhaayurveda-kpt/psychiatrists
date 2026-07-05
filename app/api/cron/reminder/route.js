@@ -11,22 +11,24 @@ export async function GET(request) {
 
   const today = new Date().toISOString().slice(0, 10);
 
-  const due = await db.select({
+  const [clinicRow] = await db.select().from(clinics).limit(1);
+
+  const dueBase = await db.select({
     prescription_id: prescriptions.id,
     followup_date: prescriptions.followup_date,
     patient_name: patients.name,
     patient_phone: patients.phone,
-    clinic_name: clinics.name,
   })
     .from(prescriptions)
     .innerJoin(patients, eq(prescriptions.patient_id, patients.id))
-    .innerJoin(clinics, eq(prescriptions.clinic_id, clinics.id))
     .where(
       and(
         eq(prescriptions.followup_date, today),
         eq(prescriptions.reminder_sent, 0)
       )
     );
+
+  const due = dueBase.map((r) => ({ ...r, clinic_name: clinicRow?.name || '' }));
 
   for (const row of due) {
     // TODO: replace with Fast2SMS API call

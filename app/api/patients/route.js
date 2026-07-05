@@ -1,6 +1,6 @@
 import { db } from '@/lib/db.js';
 import { patients, clinics } from '@/lib/schema.js';
-import { eq, and } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 import { getSession } from '@/lib/session.js';
 
@@ -22,18 +22,16 @@ export async function GET(request) {
   if (!session) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   if (!(await checkExpiry(session))) return NextResponse.json({ error: 'expired' }, { status: 403 });
 
-  const clinic_id = session.clinic_id;
   const { searchParams } = new URL(request.url);
   const phone = searchParams.get('phone');
 
   if (phone) {
     const result = await db.select().from(patients)
-      .where(and(eq(patients.clinic_id, clinic_id), eq(patients.phone, phone)));
+      .where(eq(patients.phone, phone));
     return NextResponse.json(result);
   }
 
-  const result = await db.select().from(patients)
-    .where(eq(patients.clinic_id, clinic_id));
+  const result = await db.select().from(patients);
   return NextResponse.json(result);
 }
 
@@ -42,7 +40,6 @@ export async function POST(request) {
   if (!session) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   if (!(await checkExpiry(session))) return NextResponse.json({ error: 'expired' }, { status: 403 });
 
-  const clinic_id = session.clinic_id;
   const { name, phone } = await request.json();
 
   if (!name || !phone) {
@@ -50,16 +47,16 @@ export async function POST(request) {
   }
 
   const existing = await db.select().from(patients)
-    .where(and(eq(patients.clinic_id, clinic_id), eq(patients.phone, phone)));
+    .where(eq(patients.phone, phone));
 
   let patient;
   if (existing.length > 0) {
     patient = existing[0];
   } else {
     const result = await db.insert(patients)
-      .values({ name, phone, clinic_id });
+      .values({ name, phone });
     const [inserted] = await db.select().from(patients)
-      .where(and(eq(patients.clinic_id, clinic_id), eq(patients.phone, phone)));
+      .where(eq(patients.phone, phone));
     patient = inserted;
   }
 

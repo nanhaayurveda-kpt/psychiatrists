@@ -9,7 +9,7 @@ export async function GET(request, { params }) {
     return NextResponse.json({ error: 'Invalid token' }, { status: 400 });
   }
 
-  const [row] = await db.select({
+  const [rowBase] = await db.select({
     id: prescriptions.id,
     visit_date: prescriptions.visit_date,
     complaints: prescriptions.complaints,
@@ -20,14 +20,15 @@ export async function GET(request, { params }) {
     followup_date: prescriptions.followup_date,
     patient_name: patients.name,
     patient_phone: patients.phone,
-    clinic_name: clinics.name,
   })
     .from(prescriptions)
     .innerJoin(patients, eq(prescriptions.patient_id, patients.id))
-    .innerJoin(clinics, eq(prescriptions.clinic_id, clinics.id))
     .where(eq(prescriptions.public_token, token));
 
-  if (!row) return NextResponse.json({ error: 'Not found' }, { status: 404 });
+  if (!rowBase) return NextResponse.json({ error: 'Not found' }, { status: 404 });
+
+  const [clinicRow] = await db.select().from(clinics).limit(1);
+  const row = { ...rowBase, clinic_name: clinicRow?.name || '' };
 
   return NextResponse.json(row);
 }
